@@ -4,6 +4,7 @@
   "description": "Google Actions SDK project for Nightscout CGM integration",
   "main": "index.js",
   "dependencies": {
+    "actions-on-google": "^1.0.4",
     "google-cloud": "^0.45.1"
   },
   "devDependencies": {},
@@ -15,7 +16,7 @@
     "url": "git+https://github.com/mcdafydd/googlehome-nightscout.git"
   },
   "author": "David McPike",
-  "license": "ISC",
+  "license": "ASL",
   "bugs": {
     "url": "https://github.com/mcdafydd/googlehome-nightscout/issues"
   },
