@@ -9,4 +9,5 @@ function configure() {
     finish: finish
   };
 }
-modules.exports = configure;
+
+module.exports = configure;

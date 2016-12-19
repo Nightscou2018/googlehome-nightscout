@@ -9,4 +9,5 @@ function configure() {
     insulinRemaining: insulinRemaining
   };
 }
-modules.exports = configure;
+
+module.exports = configure;

@@ -9,4 +9,5 @@ function configure() {
     pumpBattery: pumpBattery
   };
 }
-modules.exports = configure;
+
+module.exports = configure;

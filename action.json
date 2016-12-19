@@ -3,7 +3,10 @@
   "agentInfo": {
     "languageCode": "en-US",
     "projectId": "actions-153005",
-    "voiceName": "female_1"
+    "voiceName": "female_1",
+    "invocationNames": [
+      "nightscout"
+    ]
   },
   "actions": [
     {
@@ -12,7 +15,7 @@
         "intent": "assistant.intent.action.MAIN"
       },
       "httpExecution": {
-        "url": "https://11ded11f.ngrok.io"
+        "url": "https://15b2aef3.ngrok.io"
       }
     },
     {
@@ -29,7 +32,7 @@
         ]
       },
       "httpExecution": {
-        "url": "https://11ded11f.ngrok.io"
+        "url": "https://15b2aef3.ngrok.io"
       }
     },
     {

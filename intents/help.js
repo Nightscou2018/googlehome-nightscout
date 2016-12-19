@@ -12,4 +12,4 @@ function configure() {
   };
 }
 
-modules.exports = configure;
+module.exports = configure;

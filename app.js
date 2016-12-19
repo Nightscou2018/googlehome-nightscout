@@ -22,30 +22,41 @@ let express = require('express');
 let bodyParser = require('body-parser');
 
 // Load intent handlers
-var currentMetric = require('intents/currentMetric')
-  , finish = require('intents/finish')
-  , help = require('intents/help')
-  , insulinRemaining = require('intents/insulinRemaining')
-  , lastLoop = require('intents/lastLoop')
-  , noMatch = require('intents/noMatch')
-  , pumpBattery = require('intents/pumpBattery')
-  , uploaderBattery = require('intents/uploaderBattery')();
+var currentMetric = require('./intents/currentMetric')
+  , finish = require('./intents/finish')
+  , help = require('./intents/help')
+  , insulinRemaining = require('./intents/insulinRemaining')
+  , lastLoop = require('./intents/lastLoop')
+  , noMatch = require('./intents/noMatch')
+  , pumpBattery = require('./intents/pumpBattery')
+  , uploaderBattery = require('./intents/uploaderBattery')();
+
+// Define intents
+const CURRENT_METRIC = 'CURRENT_METRIC';
+const FINISH = 'FINISH';
+const HELP = 'HELP';
+const INSULIN_REMAINING = 'INSULIN_REMAINING';
+const LAST_LOOP = 'LAST_LOOP';
+const NO_MATCH = 'NO_MATCH';
+const PUMP_BATTERY = 'PUMP_BATTERY';
+const UPLOADER_BATTERY = 'UPLOADER_BATTERY';
+
 
 let app = express();
 app.set('port', (process.env.PORT || 8080));
 app.use(bodyParser.json({ type: 'application/json' }));
 
-app.post('/', function (request, response) {
+app.post('/', function (request, response) {  
   console.log('handle post');
   const assistant = new ActionsSdkAssistant({ request: request, response: response });
 
   function mainIntent(assistant) {
     console.log('mainIntent');
     let inputPrompt = assistant.buildInputPrompt(true, '<speak>Hi, this is Nightscout! ' +
-      'What can I help you with? ',
+      'What can I help you with? </speak>',
       ['I didn\'t hear anything', 'You can say help to learn more',
         'Try asking me what your current blood glucose is']);
-    assistant.ask(inputPrompt);
+    assistant.tell(inputPrompt);
   }
 
   function rawInput(assistant) {
@@ -62,14 +73,15 @@ app.post('/', function (request, response) {
 
   let actionMap = new Map();
   actionMap.set(assistant.StandardIntents.MAIN, mainIntent);
+  actionMap.set(CURRENT_METRIC, currentMetric);
+  actionMap.set(FINISH, finish);
+  actionMap.set(HELP, help);
+  actionMap.set(INSULIN_REMAINING, insulinRemaining);
+  actionMap.set(LAST_LOOP, lastLoop);
+  actionMap.set(PUMP_BATTERY, pumpBattery);
+  actionMap.set(UPLOADER_BATTERY, uploaderBattery);
   actionMap.set(assistant.StandardIntents.TEXT, rawInput);
-  actionMap.set(UPLOADER_BATTERY, requestPermission);
-  actionMap.set(PUMP_BATTERY, sayName);
-  actionMap.set(LAST_LOOP, requestPermission);
-  actionMap.set(INSULIN_REMAINING, sayName);
-  actionMap.set(HELP, requestPermission);
-  actionMap.set(FINISH, sayName);
-  actionMap.set(CURRENT_METRIC, sayName);
+  
   assistant.handleRequest(actionMap);
 });
 

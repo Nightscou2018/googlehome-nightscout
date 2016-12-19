@@ -17,4 +17,4 @@ function configure() {
     noMatch: noMatch
   };
 }
-modules.exports = configure;
+module.exports = configure;

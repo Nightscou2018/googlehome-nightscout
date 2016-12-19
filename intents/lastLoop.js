@@ -9,4 +9,5 @@ function configure() {
     lastLoop: lastLoop
   };
 }
-modules.exports = configure;
+
+module.exports = configure;

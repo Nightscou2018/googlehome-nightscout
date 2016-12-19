@@ -9,4 +9,5 @@ function configure() {
     currentMetric: currentMetric
   };
 }
-modules.exports = configure;
+
+module.exports = configure;

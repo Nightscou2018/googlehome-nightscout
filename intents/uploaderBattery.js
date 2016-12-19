@@ -9,4 +9,5 @@ function configure() {
     uploaderBattery: uploaderBattery
   };
 }
-modules.exports = configure;
+
+module.exports = configure;
