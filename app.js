@@ -71,8 +71,6 @@ app.post('/', function (request, response) {
   actionMap.set(FINISH, sayName);
   actionMap.set(CURRENT_METRIC, sayName);
   assistant.handleRequest(actionMap);
-
-  assistant.handleRequest(actionMap);
 });
 
 // Start the server

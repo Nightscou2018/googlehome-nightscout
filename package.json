@@ -4,6 +4,8 @@
   "description": "Google Actions SDK project for Nightscout CGM integration",
   "main": "index.js",
   "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.13.4",
     "actions-on-google": "^1.0.4",
     "google-cloud": "^0.45.1"
   },
