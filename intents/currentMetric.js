@@ -1,13 +1,11 @@
 'use strict';
 
-function currentMetric(assistant) {
-  assistant.tell('current metric');
+var handler = function (assistant) {
+   console.log('currentMetric');
+   let inputPrompt = assistant.buildInputPrompt(true, '<speak>You said, ' +
+        assistant.getRawInput() + '</speak>',
+        []);
+    assistant.ask(inputPrompt);
 }
 
-function configure() {
-  return {
-    currentMetric: currentMetric
-  };
-}
-
-module.exports = configure;
+exports.handler = handler;

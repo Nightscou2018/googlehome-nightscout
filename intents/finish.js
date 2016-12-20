@@ -1,13 +1,11 @@
 'use strict';
 
-function finish(assistant) {
-  assistant.tell('Goodbye!');
+var handler = function (assistant) {
+   console.log('finish');
+   let inputPrompt = assistant.buildInputPrompt(true, '<speak>You said, ' +
+        assistant.getRawInput() + '</speak>',
+        []);
+    assistant.ask(inputPrompt);
 }
 
-function configure() {
-  return {
-    finish: finish
-  };
-}
-
-module.exports = configure;
+exports.handler = handler;

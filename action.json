@@ -1,162 +1,173 @@
 {
-  "versionLabel": "0.0.1",
-  "agentInfo": {
-    "languageCode": "en-US",
-    "projectId": "actions-153005",
-    "voiceName": "female_1",
-    "invocationNames": [
-      "nightscout"
-    ]
-  },
-  "actions": [
-    {
-      "description": "Launch intent",
-      "initialTrigger": {
-        "intent": "assistant.intent.action.MAIN"
-      },
-      "httpExecution": {
-        "url": "https://15b2aef3.ngrok.io"
-      }
-    },
-    {
-      "description": "Returns battery status of Nightscout uploader",
-      "initialTrigger": {
-        "intent": "UPLOADER_BATTERY",
-        "queryPatterns": [
-          {
-            "queryPattern": "What is my uploader battery?"
-          },
-          {
-            "queryPattern": "How is my uploader battery?"
-          }
-        ]
-      },
-      "httpExecution": {
-        "url": "https://15b2aef3.ngrok.io"
-      }
-    },
-    {
-      "description": "Returns battery status of Nightscout uploader",
-      "initialTrigger": {
-        "intent": "PUMP_BATTERY",
-        "queryPatterns": [
-          {
-            "queryPattern": "How is my pump battery?"
-          },
-          {
-            "queryPattern": "What is my current pump battery?"
-          },
-          {
-            "queryPattern": "What is my pump battery?"
-          }
-        ]
-      },
-      "httpExecution": {
-        "url": "https://11ded11f.ngrok.io"
-      }
-    },
-    {
-      "description": "",
-      "initialTrigger": {
-        "intent": "LAST_LOOP",
-        "queryPatterns": [
-          {
-            "queryPattern": "When was my last loop?"
-          }
-        ]
-      },
-      "httpExecution": {
-        "url": "https://11ded11f.ngrok.io"
-      }
-    },
-    {
-      "description": "Returns battery status of Nightscout uploader",
-      "initialTrigger": {
-        "intent": "INSULIN_REMAINING",
-        "queryPatterns": [
-          {
-            "queryPattern": "How much insulin do I have remaining?"
-          }
-        ]
-      },
-      "httpExecution": {
-        "url": "https://11ded11f.ngrok.io"
-      }
-    },
-    {
-      "description": "Returns battery status of Nightscout uploader",
-      "initialTrigger": {
-        "intent": "HELP",
-        "queryPatterns": [
-          {
-            "queryPattern": "What can you answer?"
-          },
-          {
-            "queryPattern": "What can I ask you?"
-          },
-          {
-            "queryPattern": "Help"
-          },
-          {
-            "queryPattern": "What can I ask you?"
-          }
-        ]
-      },
-      "httpExecution": {
-        "url": "https://11ded11f.ngrok.io"
-      }
-    },
-    {
-      "description": "Returns battery status of Nightscout uploader",
-      "initialTrigger": {
-        "intent": "FINISH",
-        "queryPatterns": [
-          {
-            "queryPattern": "Cancel."
-          },
-          {
-            "queryPattern": "Quit."
-          },
-          {
-            "queryPattern": "Exit."
-          },
-          {
-            "queryPattern": "Allright, thank you."
-          },
-          {
-            "queryPattern": "Okay, thank you."
-          },
-          {
-            "queryPattern": "Thank you."
-          }
-        ]
-      },
-      "httpExecution": {
-        "url": "https://11ded11f.ngrok.io"
-      }
-    },
-    {
-      "description": "Returns battery status of Nightscout uploader",
-      "initialTrigger": {
-        "intent": "CURRENT_METRIC",
-        "queryPatterns": [
-          {
-            "queryPattern": "How many carbohydrates do I have on board?"
-          },
-          {
-            "queryPattern": "How many carbs on board?"
-          },
-          {
-            "queryPattern": "How much insulin do I have on board?"
-          },
-          {
-            "queryPattern": "What is my blood sugar?"
-          }
-        ]
-      },
-      "httpExecution": {
-        "url": "https://11ded11f.ngrok.io"
-      }
-    }
-  ]
+	"versionLabel": "0.0.1",
+	"agentInfo": {
+		"languageCode": "en-US",
+		"projectId": "actions-153005",
+		"voiceName": "female_1"
+	},
+	"actions": [
+		{
+			"description": "Welcome intent",
+			"initialTrigger": {
+				"intent": "assistant.intent.action.MAIN"
+			},
+			"httpExecution": {
+				"url": "https://9e64092f.ngrok.io"
+			}
+		},
+		{
+			"description": "Deep link to handle addition inputs",
+			"initialTrigger": {
+				"intent": "raw.input",
+				"queryPatterns": [
+					{
+						"queryPattern": "Sample extra handler"
+					}
+				]
+			},
+			"httpExecution": {
+				"url": "https://9e64092f.ngrok.io"
+			}
+		},
+		{
+			"description": "Deep link - Returns battery status of Nightscout uploader",
+			"initialTrigger": {
+				"intent": "UPLOADER_BATTERY",
+				"queryPatterns": [
+					{
+						"queryPattern": "What is my uploader battery?"
+					},
+					{
+						"queryPattern": "How is my uploader battery?"
+					}
+				]
+			},
+			"httpExecution": {
+				"url": "https://9e64092f.ngrok.io"
+			}
+		},
+		{
+			"description": "Deep link - Returns battery status of Nightscout uploader",
+			"initialTrigger": {
+				"intent": "PUMP_BATTERY",
+				"queryPatterns": [
+					{
+						"queryPattern": "How is my pump battery?"
+					},
+					{
+						"queryPattern": "What is my current pump battery?"
+					},
+					{
+						"queryPattern": "What is my pump battery?"
+					}
+				]
+			},
+			"httpExecution": {
+				"url": "https://9e64092f.ngrok.io"
+			}
+		},
+		{
+			"description": "Deep link - OpenAPS loop handler",
+			"initialTrigger": {
+				"intent": "LAST_LOOP",
+				"queryPatterns": [
+					{
+						"queryPattern": "When was my last loop?"
+					}
+				]
+			},
+			"httpExecution": {
+				"url": "https://9e64092f.ngrok.io"
+			}
+		},
+		{
+			"description": "Deep link - Returns battery status of Nightscout uploader",
+			"initialTrigger": {
+				"intent": "INSULIN_REMAINING",
+				"queryPatterns": [
+					{
+						"queryPattern": "How much insulin do I have remaining?"
+					}
+				]
+			},
+			"httpExecution": {
+				"url": "https://9e64092f.ngrok.io"
+			}
+		},
+		{
+			"description": "Deep link - Returns battery status of Nightscout uploader",
+			"initialTrigger": {
+				"intent": "HELP",
+				"queryPatterns": [
+					{
+						"queryPattern": "What can you answer?"
+					},
+					{
+						"queryPattern": "What can I ask you?"
+					},
+					{
+						"queryPattern": "Help"
+					},
+					{
+						"queryPattern": "What can I ask you?"
+					}
+				]
+			},
+			"httpExecution": {
+				"url": "https://9e64092f.ngrok.io"
+			}
+		},
+		{
+			"description": "Deep link - Returns battery status of Nightscout uploader",
+			"initialTrigger": {
+				"intent": "FINISH",
+				"queryPatterns": [
+					{
+						"queryPattern": "Cancel."
+					},
+					{
+						"queryPattern": "Quit."
+					},
+					{
+						"queryPattern": "Exit."
+					},
+					{
+						"queryPattern": "Allright, thank you."
+					},
+					{
+						"queryPattern": "Okay, thank you."
+					},
+					{
+						"queryPattern": "Thank you."
+					}
+				]
+			},
+			"httpExecution": {
+				"url": "https://9e64092f.ngrok.io"
+			}
+		},
+		{
+			"description": "Deep link - Returns battery status of Nightscout uploader",
+			"initialTrigger": {
+				"intent": "CURRENT_METRIC",
+				"queryPatterns": [
+					{
+						"queryPattern": "(How many)? carbohydrates do I have on board?"
+					},
+					{
+						"queryPattern": "(How many)? carbs on board?"
+					},
+					{
+						"queryPattern": "How much insulin do I have on board?"
+					},
+					{
+						"queryPattern": "(What is my)? blood sugar?"
+					}
+				]
+			},
+			"httpExecution": {
+				"url": "https://9e64092f.ngrok.io"
+			}
+		}
+	]
 }

@@ -1,13 +1,11 @@
 'use strict';
 
-function uploaderBattery(assistant) {
-
+var handler = function (assistant) {
+    console.log('uploader battery');
+    let inputPrompt = assistant.buildInputPrompt(true, '<speak>You said, ' +
+        assistant.getRawInput() + '</speak>',
+        []);
+    assistant.ask(inputPrompt);
 }
 
-function configure() {
-  return {
-    uploaderBattery: uploaderBattery
-  };
-}
-
-module.exports = configure;
+exports.handler = handler;

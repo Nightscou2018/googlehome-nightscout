@@ -1,13 +1,11 @@
 'use strict';
 
-function insulinRemaining(assistant) {
-
+var handler = function (assistant) {
+   console.log('insulin remaining');
+   let inputPrompt = assistant.buildInputPrompt(true, '<speak>You said, ' +
+        assistant.getRawInput(),
+        []);
+    assistant.ask(inputPrompt);
 }
 
-function configure() {
-  return {
-    insulinRemaining: insulinRemaining
-  };
-}
-
-module.exports = configure;
+exports.handler = handler;

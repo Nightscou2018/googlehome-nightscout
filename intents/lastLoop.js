@@ -1,13 +1,11 @@
 'use strict';
 
-function lastLoop(assistant) {
-
+var handler = function (assistant) {
+   console.log('last loop');
+   let inputPrompt = assistant.buildInputPrompt(true, '<speak>You said, ' +
+        assistant.getRawInput(),
+        []);
+    assistant.ask(inputPrompt);
 }
 
-function configure() {
-  return {
-    lastLoop: lastLoop
-  };
-}
-
-module.exports = configure;
+exports.handler = handler;

@@ -17,7 +17,15 @@
 
 process.env.DEBUG = 'actions-on-google:*';
 
+// Die if APIAI_CLIENT_TOKEN is not defined
+if (typeof process.env.APIAI_CLIENT_TOKEN === 'undefined' ||
+  process.env.APIAI_CLIENT_TOKEN === '') {
+  console.log('APIAI_CLIENT_TOKEN is not set');
+  process.exit(1);
+}
+
 let ActionsSdkAssistant = require('actions-on-google').ActionsSdkAssistant;
+let apiai = require('apiai');
 let express = require('express');
 let bodyParser = require('body-parser');
 
@@ -29,7 +37,7 @@ var currentMetric = require('./intents/currentMetric')
   , lastLoop = require('./intents/lastLoop')
   , noMatch = require('./intents/noMatch')
   , pumpBattery = require('./intents/pumpBattery')
-  , uploaderBattery = require('./intents/uploaderBattery')();
+  , uploaderBattery = require('./intents/uploaderBattery');
 
 // Define intents
 const CURRENT_METRIC = 'CURRENT_METRIC';
@@ -40,13 +48,13 @@ const LAST_LOOP = 'LAST_LOOP';
 const NO_MATCH = 'NO_MATCH';
 const PUMP_BATTERY = 'PUMP_BATTERY';
 const UPLOADER_BATTERY = 'UPLOADER_BATTERY';
-
+const RAW_INTENT = 'raw.input';
 
 let app = express();
 app.set('port', (process.env.PORT || 8080));
 app.use(bodyParser.json({ type: 'application/json' }));
 
-app.post('/', function (request, response) {  
+app.post('/', function (request, response) {
   console.log('handle post');
   const assistant = new ActionsSdkAssistant({ request: request, response: response });
 
@@ -56,32 +64,78 @@ app.post('/', function (request, response) {
       'What can I help you with? </speak>',
       ['I didn\'t hear anything', 'You can say help to learn more',
         'Try asking me what your current blood glucose is']);
-    assistant.tell(inputPrompt);
+    assistant.ask(inputPrompt, state);
   }
 
   function rawInput(assistant) {
-    console.log('rawInput');
+    console.log('rawInput = ' + assistant.getRawInput());
+    console.log('assistant = ' + assistant);
     if (assistant.getRawInput() === 'bye') {
       assistant.tell('Goodbye!');
     } else {
-      let inputPrompt = assistant.buildInputPrompt(true, '<speak>You said, <say-as interpret-as="ordinal">' +
-        assistant.getRawInput() + '</say-as></speak>',
-        ['I didn\'t hear a number', 'If you\'re still there, what\'s the number?', 'What is the number?']);
-      assistant.ask(inputPrompt);
+      let languageProcessor = apiai(process.env.APIAI_CLIENT_TOKEN);
+      var request = languageProcessor.textRequest(assistant.getRawInput(), {
+        sessionId: '1'
+      });
+      request.on('response', function (response) {
+        // Call handler
+        console.log('API.AI detected intent as ' + response.result.metadata.intentName);
+        switch(response.result.metadata.intentName) {
+          case CURRENT_METRIC:
+            currentMetric.handler
+            break;
+          case FINISH:
+            finish.handler
+            break;
+          case HELP:
+            help.handler
+            break;
+          case INSULIN_REMAINING:
+            insulinRemaining.handler
+            break;
+          case LAST_LOOP:
+            lastLoop.handler
+            break;
+          case PUMP_BATTERY:
+            pumpBattery.handler
+            break;
+          case UPLOADER_BATTERY:
+            uploaderBattery.handler
+            break;
+          default:
+            noMatch.handler
+            break;
+        }
+      });
+      request.on('error', function (error) {
+        console.log(error);
+        noMatch.handler;
+      });
+      request.end();
+
+      let inputPrompt = assistant.buildInputPrompt(true, '<speak>You said, ' +
+        assistant.getRawInput() + '</speak>',
+        ['I didn\'t hear anything', 'You can say help to learn more',
+          'Try asking me what your current blood glucose is']);
+      assistant.ask(inputPrompt, state);
     }
   }
 
+  // get state object and modify it
+  let state = assistant.getDialogState();
+
   let actionMap = new Map();
-  actionMap.set(assistant.StandardIntents.MAIN, mainIntent);
-  actionMap.set(CURRENT_METRIC, currentMetric);
-  actionMap.set(FINISH, finish);
-  actionMap.set(HELP, help);
-  actionMap.set(INSULIN_REMAINING, insulinRemaining);
-  actionMap.set(LAST_LOOP, lastLoop);
-  actionMap.set(PUMP_BATTERY, pumpBattery);
-  actionMap.set(UPLOADER_BATTERY, uploaderBattery);
+  actionMap.set(new ActionsSdkAssistant().StandardIntents.MAIN, mainIntent);
   actionMap.set(assistant.StandardIntents.TEXT, rawInput);
-  
+  actionMap.set(RAW_INTENT, rawInput);
+  actionMap.set(CURRENT_METRIC, currentMetric.handler);
+  actionMap.set(FINISH, finish.handler);
+  actionMap.set(HELP, help.handler);
+  actionMap.set(INSULIN_REMAINING, insulinRemaining.handler);
+  actionMap.set(LAST_LOOP, lastLoop.handler);
+  actionMap.set(PUMP_BATTERY, pumpBattery.handler);
+  actionMap.set(UPLOADER_BATTERY, uploaderBattery.handler);
+
   assistant.handleRequest(actionMap);
 });
 

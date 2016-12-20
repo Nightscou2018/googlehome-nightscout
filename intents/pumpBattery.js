@@ -1,13 +1,11 @@
 'use strict';
 
-function pumpBattery(assistant) {
-
+var handler = function (assistant) {
+   console.log('pump battery');
+   let inputPrompt = assistant.buildInputPrompt(true, '<speak>You said, ' +
+        assistant.getRawInput() + '</speak>',
+        []);
+    assistant.ask(inputPrompt);
 }
 
-function configure() {
-  return {
-    pumpBattery: pumpBattery
-  };
-}
-
-module.exports = configure;
+exports.handler = handler;

@@ -1,15 +1,13 @@
 'use strict';
 
-function help(assistant) {
-  response = 'I can give you information about your Nightscout monitor.' +
-    'Try asking me what your current blood glucose is.';
-  assistant.tell(response);
+var handler = function (assistant) {
+    console.log('help');
+    response = 'I can give you information about your Nightscout monitor.'
+        + 'Try asking me what your current blood glucose is.';
+    let inputPrompt = assistant.buildInputPrompt(true, '<speak>You said, ' +
+        assistant.getRawInput() + '</speak>',
+        []);
+    assistant.ask(inputPrompt);
 }
 
-function configure() {
-  return {
-    help: help
-  };
-}
-
-module.exports = configure;
+exports.handler = handler;
