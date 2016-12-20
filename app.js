@@ -57,6 +57,8 @@ app.use(bodyParser.json({ type: 'application/json' }));
 app.post('/', function (request, response) {
   console.log('handle post');
   const assistant = new ActionsSdkAssistant({ request: request, response: response });
+  // Use for API.AI sessionid parameter
+  let id = request.body.conversation.conversation_id;
 
   function mainIntent(assistant) {
     console.log('mainIntent');
@@ -69,55 +71,48 @@ app.post('/', function (request, response) {
 
   function rawInput(assistant) {
     console.log('rawInput = ' + assistant.getRawInput());
-    console.log('assistant = ' + assistant);
     if (assistant.getRawInput() === 'bye') {
       assistant.tell('Goodbye!');
     } else {
       let languageProcessor = apiai(process.env.APIAI_CLIENT_TOKEN);
-      var request = languageProcessor.textRequest(assistant.getRawInput(), {
-        sessionId: '1'
+      var apiaiReq = languageProcessor.textRequest(assistant.getRawInput(), {
+        sessionId: id
       });
-      request.on('response', function (response) {
+      apiaiReq.on('response', function (response) {
         // Call handler
         console.log('API.AI detected intent as ' + response.result.metadata.intentName);
-        switch(response.result.metadata.intentName) {
+        switch (response.result.metadata.intentName) {
           case CURRENT_METRIC:
-            currentMetric.handler
+            currentMetric.handler(assistant)
             break;
           case FINISH:
-            finish.handler
+            finish.handler(assistant)
             break;
           case HELP:
-            help.handler
+            help.handler(assistant)
             break;
           case INSULIN_REMAINING:
-            insulinRemaining.handler
+            insulinRemaining.handler(assistant)
             break;
           case LAST_LOOP:
-            lastLoop.handler
+            lastLoop.handler(assistant)
             break;
           case PUMP_BATTERY:
-            pumpBattery.handler
+            pumpBattery.handler(assistant)
             break;
           case UPLOADER_BATTERY:
-            uploaderBattery.handler
+            uploaderBattery.handler(assistant)
             break;
           default:
-            noMatch.handler
+            noMatch.handler(assistant)
             break;
         }
       });
-      request.on('error', function (error) {
+      apiaiReq.on('error', function (error) {
         console.log(error);
         noMatch.handler;
       });
-      request.end();
-
-      let inputPrompt = assistant.buildInputPrompt(true, '<speak>You said, ' +
-        assistant.getRawInput() + '</speak>',
-        ['I didn\'t hear anything', 'You can say help to learn more',
-          'Try asking me what your current blood glucose is']);
-      assistant.ask(inputPrompt, state);
+      apiaiReq.end();
     }
   }
 
@@ -125,7 +120,7 @@ app.post('/', function (request, response) {
   let state = assistant.getDialogState();
 
   let actionMap = new Map();
-  actionMap.set(new ActionsSdkAssistant().StandardIntents.MAIN, mainIntent);
+  actionMap.set(assistant.StandardIntents.MAIN, mainIntent);
   actionMap.set(assistant.StandardIntents.TEXT, rawInput);
   actionMap.set(RAW_INTENT, rawInput);
   actionMap.set(CURRENT_METRIC, currentMetric.handler);
