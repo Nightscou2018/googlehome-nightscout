@@ -5,7 +5,7 @@ var handler = function (assistant) {
     let phrase = 'I can give you information about your Nightscout monitor.'
         + 'Try asking me what your current blood glucose is.';
     let inputPrompt = assistant.buildInputPrompt(true, '<speak>' + 
-      phrase + '</speak>', []);
+      phrase + '</speak>', noInput);
     assistant.ask(inputPrompt);
 }
 

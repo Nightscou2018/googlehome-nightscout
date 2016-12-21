@@ -13,7 +13,7 @@ var handler = function (assistant) {
     "I\u0027m a bit confused."];
    let inputPrompt = assistant.buildInputPrompt(true, '<speak>You said, ' +
         assistant.getRawInput() + '</speak>',
-        []);
+        noInput);
     assistant.ask(inputPrompt);
 }
 

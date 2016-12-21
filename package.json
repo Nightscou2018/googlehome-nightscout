@@ -8,7 +8,8 @@
     "express": "^4.13.4",
     "actions-on-google": "^1.0.4",
     "google-cloud": "^0.45.1",
-		"apiai": "^3.0.3"
+    "apiai": "^3.0.3",
+    "thingspeakclient": "^0.4.0"
   },
   "devDependencies": {},
   "scripts": {

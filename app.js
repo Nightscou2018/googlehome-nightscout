@@ -20,7 +20,7 @@ process.env.DEBUG = 'actions-on-google:*';
 // Die if APIAI_CLIENT_TOKEN is not defined
 if (typeof process.env.APIAI_CLIENT_TOKEN === 'undefined' ||
   process.env.APIAI_CLIENT_TOKEN === '') {
-  console.log('APIAI_CLIENT_TOKEN is not set');
+  console.log('error: APIAI_CLIENT_TOKEN is not set');
   process.exit(1);
 }
 
@@ -28,6 +28,9 @@ let ActionsSdkAssistant = require('actions-on-google').ActionsSdkAssistant;
 let apiai = require('apiai');
 let express = require('express');
 let bodyParser = require('body-parser');
+
+// Set global noInput phrases
+var noInput = ['What\'s next?', 'How can I help you?', 'Try saying help'];
 
 // Load intent handlers
 var currentMetric = require('./intents/currentMetric')
@@ -37,7 +40,8 @@ var currentMetric = require('./intents/currentMetric')
   , lastLoop = require('./intents/lastLoop')
   , noMatch = require('./intents/noMatch')
   , pumpBattery = require('./intents/pumpBattery')
-  , uploaderBattery = require('./intents/uploaderBattery');
+  , uploaderBattery = require('./intents/uploaderBattery')
+  , tempHum = require('./intents/tempHum');
 
 // Define intents
 const CURRENT_METRIC = 'CURRENT_METRIC';
@@ -63,9 +67,7 @@ app.post('/', function (request, response) {
   function mainIntent(assistant) {
     console.log('mainIntent');
     let inputPrompt = assistant.buildInputPrompt(true, '<speak>Hi, this is Nightscout! ' +
-      'What can I help you with? </speak>',
-      ['I didn\'t hear anything', 'You can say help to learn more',
-        'Try asking me what your current blood glucose is']);
+      'What can I help you with? </speak>', noInput);
     assistant.ask(inputPrompt, state);
   }
 
@@ -104,7 +106,7 @@ app.post('/', function (request, response) {
             uploaderBattery.handler(assistant)
             break;
           default:
-            noMatch.handler(assistant)
+            tempHum.handler(assistant)
             break;
         }
       });
