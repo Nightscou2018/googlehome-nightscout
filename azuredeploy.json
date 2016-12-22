@@ -1,0 +1,123 @@
+  {
+    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "siteName": {
+        "type": "string"
+      },
+      "hostingPlanName": {
+        "type": "string"
+      },
+      "siteLocation": {
+        "type": "string"
+      },
+      "sku": {
+        "type": "string",
+        "allowedValues": [
+          "Free",
+          "Shared",
+          "Basic",
+          "Standard"
+        ],
+        "defaultValue": "Free"
+      },
+      "workerSize": {
+        "type": "string",
+        "allowedValues": [
+          "0",
+          "1",
+          "2"
+        ],
+        "defaultValue": "0"
+      },
+      "repoUrl": {
+        "type": "string"
+
+      },
+      "branch": {
+        "type": "string"
+      },
+      "apiSecret": {
+        "type": "string",
+        "minLength": "12",
+        "defaultValue": "Enter an API secret. Must be at least 12 characters"
+      },
+      "apiAiClientToken": {
+        "type": "string",
+        "minLength": "12",
+        "defaultValue": "Enter an API.AI client token.  This should be the client token specified on the API.AI agent you've setup to process language requests from this application."
+      },
+      "thingspeakChannelId": {
+        "type": "int",
+        "defaultValue": "Required for Thingspeak integration.  This value should be the channel number you wish to read"
+      },
+      "thingspeakKey": {
+        "type": "string",
+        "minLength": "12",
+        "defaultValue": "Required for Thingspeak integration with a private channel.  This should be the read key for the channel you wish to read."
+      }
+    },
+    "resources": [{
+      "apiVersion": "2015-04-01",
+      "name": "[parameters('hostingPlanName')]",
+      "type": "Microsoft.Web/serverFarms",
+      "location": "[parameters('siteLocation')]",
+      "properties": {
+        "sku": "[parameters('sku')]",
+        "workerSize": "[parameters('workerSize')]",
+        "numberOfWorkers": 1
+      }
+    }, {
+      "apiVersion": "2015-08-01",
+      "name": "[parameters('siteName')]",
+      "type": "Microsoft.Web/Sites",
+      "location": "[parameters('siteLocation')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]": "empty"
+      },
+      "properties": {
+        "serverFarmId": "[parameters('hostingPlanName')]",
+        "siteConfig": {
+          "appSettings": [{
+              "name": "API_SECRET",
+              "value": "[parameters('apiSecret')]"
+            },
+            {
+              "name": "APIAI_CLIENT_TOKEN",
+              "value": "[parameters('apiAiClientToken')]"
+            },
+            {
+              "name": "THINGSPEAK_KEY",
+              "value": "[parameters('thingspeakKey')]"
+            },
+            {
+              "name": "THINGSPEAK_CHANNELID",
+              "value": "[parameters('thingspeakChannelId')]"
+            },
+            {
+              "name": "WEBSITE_NODE_DEFAULT_VERSION",
+              "value": "6.9.1"
+            }
+            
+
+          ]
+        }
+      },
+      "resources": [{
+        "apiVersion": "2015-08-01",
+        "name": "web",
+        "type": "sourcecontrols",
+        "dependsOn": [
+          "[resourceId('Microsoft.Web/Sites', parameters('siteName'))]"
+        ],
+        "properties": {
+          "RepoUrl": "[parameters('repoUrl')]",
+          "branch": "[parameters('branch')]",
+          "IsManualIntegration": true
+        }
+      }]
+    }]
+  }
