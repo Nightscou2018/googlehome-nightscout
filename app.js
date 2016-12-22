@@ -29,8 +29,8 @@ let apiai = require('apiai');
 let express = require('express');
 let bodyParser = require('body-parser');
 
-// Set global noInput phrases
-var noInput = ['What\'s next?', 'How can I help you?', 'Try saying help'];
+// Set global noInput phrases to share between intent modules
+global.noInput = ['What\'s next?', 'How can I help you?', 'Try saying help'];
 
 // Load intent handlers
 var currentMetric = require('./intents/currentMetric')
@@ -41,7 +41,9 @@ var currentMetric = require('./intents/currentMetric')
   , noMatch = require('./intents/noMatch')
   , pumpBattery = require('./intents/pumpBattery')
   , uploaderBattery = require('./intents/uploaderBattery')
-  , tempHum = require('./intents/tempHum');
+  , tempHum = require('./intents/tempHum')
+  , greetBro = require('./intents/greetBro')
+  , chuckNorris = require('./intents/chuckNorris');
 
 // Define intents
 const CURRENT_METRIC = 'CURRENT_METRIC';
@@ -51,7 +53,10 @@ const INSULIN_REMAINING = 'INSULIN_REMAINING';
 const LAST_LOOP = 'LAST_LOOP';
 const NO_MATCH = 'NO_MATCH';
 const PUMP_BATTERY = 'PUMP_BATTERY';
+const TEMP_HUM = 'TEMP_HUM';
 const UPLOADER_BATTERY = 'UPLOADER_BATTERY';
+const GREET_BRO = 'GREET_BRO';
+const CHUCK_NORRIS = 'CHUCK_NORRIS';
 const RAW_INTENT = 'raw.input';
 
 let app = express();
@@ -102,11 +107,20 @@ app.post('/', function (request, response) {
           case PUMP_BATTERY:
             pumpBattery.handler(assistant)
             break;
+          case TEMP_HUM:
+            tempHum.handler(assistant)
+            break;
           case UPLOADER_BATTERY:
             uploaderBattery.handler(assistant)
             break;
+          case GREET_BRO:
+            greetBro.handler(assistant)
+            break;
+          case CHUCK_NORRIS:
+            chuckNorris.handler(assistant)
+            break;
           default:
-            tempHum.handler(assistant)
+            noMatch.handler(assistant)
             break;
         }
       });
@@ -121,6 +135,7 @@ app.post('/', function (request, response) {
   // get state object and modify it
   let state = assistant.getDialogState();
 
+  // ActionMap used for deep links at invocation time
   let actionMap = new Map();
   actionMap.set(assistant.StandardIntents.MAIN, mainIntent);
   actionMap.set(assistant.StandardIntents.TEXT, rawInput);

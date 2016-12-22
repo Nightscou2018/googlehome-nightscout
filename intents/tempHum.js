@@ -4,7 +4,7 @@ let thingspeak = require('thingspeakclient');
 let client = new thingspeak();
 
 var handler = function (assistant) {
-  console.log('temphum');
+  console.log('tempHum');
   // Die if THINGSPEAK_[KEY|CHANNELID] not defined
   if (typeof process.env.THINGSPEAK_KEY === 'undefined' ||
     process.env.THINGSPEAK_KEY === '' ||
@@ -17,15 +17,30 @@ var handler = function (assistant) {
     assistant.ask(inputPrompt);
   }
   else {
-    client.getLastEntryInChannelFeed(process.env.THINGSPEAK_CHANNELID, { api_key: process.env.THINGSPEAK_KEY },
+    if (typeof process.env.THINGSPEAK_CHANNELID === 'string') {
+      var CHANNELID = parseInt(process.env.THINGSPEAK_CHANNELID);
+    }
+    else {
+      var CHANNELID = process.env.THINGSPEAK_CHANNELID;
+    }
+    client.getLastEntryInChannelFeed(CHANNELID, { api_key: process.env.THINGSPEAK_KEY },
       function (error, response) {
-        let temp = response['field1'];
-        let humidity = response['field2'];
-        let inputPrompt = assistant.buildInputPrompt(true,
-          '<speak> Attic is currently ' + temp + ' degrees, ' +
-          'with humidity at ' + humidity + 'percent</say-as></speak>',
-          noInput);
-        assistant.ask(inputPrompt);
+        console.log('thingspeak status or error = ' + error);
+        if (!error) {
+          let temp = response['field1'];
+          let humidity = response['field2'];
+          let inputPrompt = assistant.buildInputPrompt(true,
+            '<speak> Attic is currently ' + temp + ' degrees, ' +
+            'with humidity at ' + humidity + 'percent</speak>',
+            noInput);
+          assistant.ask(inputPrompt);
+        }
+        else {
+          let inputPrompt = assistant.buildInputPrompt(true,
+            '<speak>Thingspeak didn\'t respond. ' + error + '</speak>',
+            noInput);
+          assistant.ask(inputPrompt);
+        }
       });
   }
 }

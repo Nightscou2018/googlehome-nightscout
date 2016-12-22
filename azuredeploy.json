@@ -96,13 +96,7 @@
             {
               "name": "THINGSPEAK_CHANNELID",
               "value": "[parameters('thingspeakChannelId')]"
-            },
-            {
-              "name": "WEBSITE_NODE_DEFAULT_VERSION",
-              "value": "6.9.1"
             }
-            
-
           ]
         }
       },
