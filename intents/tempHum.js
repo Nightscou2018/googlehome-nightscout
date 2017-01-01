@@ -3,8 +3,15 @@
 let thingspeak = require('thingspeakclient');
 let client = new thingspeak();
 
-var handler = function (assistant) {
+var handler = function (assistant, isDeepLink) {
   console.log('tempHum');
+  // assume this is called as part of an ongoing conversation
+  if (typeof isDeepLink === 'undefined') {
+    let isDeepLink = false;
+  }
+
+  let phrase = '';
+
   // Die if THINGSPEAK_[KEY|CHANNELID] not defined
   if (typeof process.env.THINGSPEAK_KEY === 'undefined' ||
     process.env.THINGSPEAK_KEY === '' ||
@@ -29,20 +36,29 @@ var handler = function (assistant) {
         if (!error) {
           let temp = response['field1'];
           let humidity = response['field2'];
-          let inputPrompt = assistant.buildInputPrompt(true,
-            '<speak> Attic is currently ' + temp + ' degrees, ' +
-            'with humidity at ' + humidity + 'percent</speak>',
-            noInput);
-          assistant.ask(inputPrompt);
+          phrase = '<speak> Attic is currently ' + temp + ' degrees, ' +
+            'with humidity at ' + humidity + 'percent</speak>';
         }
         else {
-          let inputPrompt = assistant.buildInputPrompt(true,
-            '<speak>Thingspeak didn\'t respond. ' + error + '</speak>',
-            noInput);
+          phrase = '<speak>Thingspeak didn\'t respond. ' + error + '</speak>';
+        }
+        // use tell() instead of ask() if deep link query
+        if (isDeepLink === true) {
+          assistant.tell(phrase);
+        }
+        else {
+          let inputPrompt = assistant.buildInputPrompt(true, phrase, noInput);
           assistant.ask(inputPrompt);
         }
       });
   }
+
 }
 
+var deepLink = function (assistant) {
+  console.log('deepLink tempHum');
+  handler(assistant, true);
+}
+
+exports.deepLink = deepLink;
 exports.handler = handler;

@@ -73,11 +73,16 @@ app.post('/', function (request, response) {
     console.log('mainIntent');
     let inputPrompt = assistant.buildInputPrompt(true, '<speak>Hi, this is Nightscout! ' +
       'What can I help you with? </speak>', noInput);
-    assistant.ask(inputPrompt, state);
+    assistant.ask(inputPrompt);
   }
 
-  function rawInput(assistant) {
+  function rawInput(assistant, isDeepLink) {
     console.log('rawInput = ' + assistant.getRawInput());
+    // assume this is called as part of an ongoing conversation
+    if (typeof isDeepLink === 'undefined') {
+      let isDeepLink = false;
+    }
+
     if (assistant.getRawInput() === 'bye') {
       assistant.tell('Goodbye!');
     } else {
@@ -90,37 +95,37 @@ app.post('/', function (request, response) {
         console.log('API.AI detected intent as ' + response.result.metadata.intentName);
         switch (response.result.metadata.intentName) {
           case CURRENT_METRIC:
-            currentMetric.handler(assistant)
+            currentMetric.handler(assistant, isDeepLink)
             break;
           case FINISH:
-            finish.handler(assistant)
+            finish.handler(assistant, isDeepLink)
             break;
           case HELP:
-            help.handler(assistant)
+            help.handler(assistant, isDeepLink)
             break;
           case INSULIN_REMAINING:
-            insulinRemaining.handler(assistant)
+            insulinRemaining.handler(assistant, isDeepLink)
             break;
           case LAST_LOOP:
-            lastLoop.handler(assistant)
+            lastLoop.handler(assistant, isDeepLink)
             break;
           case PUMP_BATTERY:
-            pumpBattery.handler(assistant)
+            pumpBattery.handler(assistant, isDeepLink)
             break;
           case TEMP_HUM:
-            tempHum.handler(assistant)
+            tempHum.handler(assistant, isDeepLink)
             break;
           case UPLOADER_BATTERY:
-            uploaderBattery.handler(assistant)
+            uploaderBattery.handler(assistant, isDeepLink)
             break;
           case GREET_BRO:
-            greetBro.handler(assistant)
+            greetBro.handler(assistant, isDeepLink)
             break;
           case CHUCK_NORRIS:
-            chuckNorris.handler(assistant)
+            chuckNorris.handler(assistant, isDeepLink)
             break;
           default:
-            noMatch.handler(assistant)
+            noMatch.handler(assistant, isDeepLink)
             break;
         }
       });
@@ -132,21 +137,23 @@ app.post('/', function (request, response) {
     }
   }
 
-  // get state object and modify it
-  let state = assistant.getDialogState();
-
+  function rawDeepLink(assistant) {
+    console.log('deepLink rawInput');
+    rawInput(assistant, true);
+  }
+  
   // ActionMap used for deep links at invocation time
   let actionMap = new Map();
   actionMap.set(assistant.StandardIntents.MAIN, mainIntent);
   actionMap.set(assistant.StandardIntents.TEXT, rawInput);
-  actionMap.set(RAW_INTENT, rawInput);
-  actionMap.set(CURRENT_METRIC, currentMetric.handler);
-  actionMap.set(FINISH, finish.handler);
-  actionMap.set(HELP, help.handler);
-  actionMap.set(INSULIN_REMAINING, insulinRemaining.handler);
-  actionMap.set(LAST_LOOP, lastLoop.handler);
-  actionMap.set(PUMP_BATTERY, pumpBattery.handler);
-  actionMap.set(UPLOADER_BATTERY, uploaderBattery.handler);
+  actionMap.set(RAW_INTENT, rawDeepLink);
+  actionMap.set(CURRENT_METRIC, currentMetric.deepLink);
+  actionMap.set(FINISH, finish.deepLink);
+  actionMap.set(HELP, help.deepLink);
+  actionMap.set(INSULIN_REMAINING, insulinRemaining.deepLink);
+  actionMap.set(LAST_LOOP, lastLoop.deepLink);
+  actionMap.set(PUMP_BATTERY, pumpBattery.deepLink);
+  actionMap.set(UPLOADER_BATTERY, uploaderBattery.deepLink);
 
   assistant.handleRequest(actionMap);
 });
