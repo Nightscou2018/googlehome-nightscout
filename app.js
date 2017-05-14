@@ -42,7 +42,7 @@ var currentMetric = require('./intents/currentMetric')
   , pumpBattery = require('./intents/pumpBattery')
   , uploaderBattery = require('./intents/uploaderBattery')
   , tempHum = require('./intents/tempHum')
-  , greetBro = require('./intents/greetBro')
+//  , greetBro = require('./intents/greetBro')
   , chuckNorris = require('./intents/chuckNorris');
 
 // Define intents
